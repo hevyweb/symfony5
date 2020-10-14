@@ -1,0 +1,59 @@
+version: '3.2'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - data.db:/var/lib/mysql:cached
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+    networks:
+      - net
+
+  fpm:
+    image: 'bitnami/php-fpm:latest'
+    volumes:
+      - './:/var/www/html'
+    working_dir: '/var/www/html'
+    networks:
+      - net
+
+  httpd:
+    image: 'httpd:2.4'
+    depends_on:
+      - 'fpm'
+    ports:
+      - '80:80'
+    volumes:
+      - './:/var/www/html:ro'
+      - './docker/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro'
+      - './docker/akeneo.conf:/usr/local/apache2/conf/vhost.conf:ro'
+    networks:
+      - net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 9191:80
+    environment:
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=secret
+      - PMA_HOST=db
+    networks:
+      - net
+
+networks:
+  net:
+    driver: "bridge"
+
+volumes:
+  data.db:
+    driver: "local"
