@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="row">
+    <h2 class="page-title">Welcome to the bare version of the site.</h2>
+    <p>Welcome to the bare version of the site.</p>
+    <p>The main idea of this version is to create a platform for the web site with basic needs, such as:</p>
+    <ul>
+        <li>Basic symfony 4.3</li>
+        <li>Users</li>
+        <li>Authentication</li>
+        <li>Registration</li>
+        <li>Categories</li>
+        <li>Security</li>
+        <li>Most common JS and CSS libraries</li>
+    </ul>
+    <h3>Release 1.1</h3>
+    <ul>
+        <li>
+            Added new entity - product. User can assigne one or several categories to product.
+        </li>
+        <li>
+            Orders: user can create/update orders, add products to them, update status.
+        </li>
+        <li>
+            Fixed some UI defects.
+        </li>
+        <li>Optimized user related functionality.</li>
+    </ul>
+    <h3>Release 1.2</h3>
+    <ul>
+        <li>
+            Fixed migration scripts.
+        </li>
+        <li>
+            Added roles. Previously they were as a part of user info. Now it's separate functionality.
+        </li>
+        <li>
+            Added permissions to the pages.
+        </li>
+        <li>
+            Fixed few bugs.
+        </li>
+        <li>
+            Added "remember me" functionality.
+        </li>
+        <li>
+            Added possibility to generate admin user via console command.
+        </li>
+    </ul>
+</div>
+{% endblock %}
