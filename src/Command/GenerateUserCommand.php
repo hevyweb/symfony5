@@ -6,24 +6,37 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class GenerateUserCommand extends ContainerAwareCommand
+class GenerateUserCommand extends Command
 {
     protected static $defaultName = 'app:generate:user';
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
-    protected function configure()
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $passwordEncoder;
+
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->entityManager = $entityManager;
+        $this->passwordEncoder = $passwordEncoder;
+        parent::__construct();
+    }
+
+    protected function configure(): void
     {
         $this
             ->setDescription('Generates admin user')
@@ -44,7 +57,7 @@ class GenerateUserCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $username = $input->getOption('username');
@@ -52,13 +65,12 @@ class GenerateUserCommand extends ContainerAwareCommand
         /**
          * @var UserRepository $userRepository
          */
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $userRepository = $entityManager->getRepository(User::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
 
 
         if ($userRepository->findOneBy(['username' => $username])) {
             $io->error('User with username "' . $username . '" already exists.');
-            return;
+            return 1;
         }
         $user = new User();
         $this->assignRoles($user);
@@ -69,17 +81,18 @@ class GenerateUserCommand extends ContainerAwareCommand
             ->setLastName($username)
             ->setPlainPassword($plainPassword);
         $this->encodePassword($user);
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $io->success('New admin user created. Username: ' . $username . ', password: ' . $plainPassword);
+        return 0;
     }
 
     /**
      * @param User $user
      * @return User
      */
-    protected function assignUniqueEmail($user)
+    protected function assignUniqueEmail(User $user): User
     {
         do {
             $email = 'Change-me' . uniqid();
@@ -89,23 +102,11 @@ class GenerateUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @return EntityManager|object
+     * @return UserRepository|ObjectRepository
      */
-    private function getEntityManager()
+    private function getUserRepository(): UserRepository
     {
-        if (empty($this->entityManager)){
-            $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        }
-
-        return $this->entityManager;
-    }
-
-    /**
-     * @return UserRepository
-     */
-    private function getUserRepository()
-    {
-        return $this->getEntityManager()->getRepository(User::class);
+        return $this->entityManager->getRepository(User::class);
     }
 
     /**
@@ -113,14 +114,14 @@ class GenerateUserCommand extends ContainerAwareCommand
      * @throws \RuntimeException
      * @return User
      */
-    private function assignRoles($user)
+    private function assignRoles(User $user): User
     {
         /**
          * @var Role $adminRole
          * @var Role $userRole
          * @var RoleRepository $roleRepository
          */
-        $roleRepository = $this->getEntityManager()->getRepository(Role::class);
+        $roleRepository = $this->entityManager->getRepository(Role::class);
         $adminRole = $roleRepository->findOneBy(['code' => 'ROLE_ADMIN']);
         $userRole = $roleRepository->findOneBy(['code' => 'ROLE_USER']);
 
@@ -137,13 +138,9 @@ class GenerateUserCommand extends ContainerAwareCommand
      * @param User $user
      * @return User
      */
-    private function encodePassword($user)
+    private function encodePassword(User $user): User
     {
-        /**
-         * @var UserPasswordEncoder $passwordEncoder
-         */
-        $passwordEncoder = $this->getContainer()->get('security.password_encoder');
-        $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+        $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
         return $user->setPassword($password);
     }
 }

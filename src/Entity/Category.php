@@ -57,15 +57,9 @@ class Category
      */
     private $updated_by;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Product", mappedBy="category")
-     */
-    private $products;
-
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->products = new ArrayCollection();
     }
 
     /**
@@ -225,34 +219,6 @@ class Category
     public function setUpdatedBy(?User $updated_by): self
     {
         $this->updated_by = $updated_by;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->addCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-            $product->removeCategory($this);
-        }
 
         return $this;
     }

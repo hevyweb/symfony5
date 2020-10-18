@@ -1,0 +1,39 @@
+{
+  "entrypoints": {
+    "js/app": {
+      "js": [
+        "/assets/runtime.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid.js",
+        "/assets/vendors~js/app.js",
+        "/assets/js/app.js"
+      ],
+      "css": [
+        "/assets/vendors~js/app.css"
+      ]
+    },
+    "js/categories": {
+      "js": [
+        "/assets/runtime.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid.js",
+        "/assets/vendors~js/categories~js/datagrid.js",
+        "/assets/js/categories.js"
+      ]
+    },
+    "js/datagrid": {
+      "js": [
+        "/assets/runtime.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid.js",
+        "/assets/vendors~js/categories~js/datagrid.js",
+        "/assets/js/datagrid.js"
+      ]
+    },
+    "css/app": {
+      "js": [
+        "/assets/runtime.js"
+      ],
+      "css": [
+        "/assets/css/app.css"
+      ]
+    }
+  }
+}

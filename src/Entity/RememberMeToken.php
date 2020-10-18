@@ -3,14 +3,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Authentication\RememberMe\PersistentTokenInterface;
 
 /**
  * This is a dummy class to prevent Doctrine from breaking migration over and over again
  *
- * @ORM\Entity(repositoryClass="App\Repository\RemembermeTokenRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\RememberMeTokenRepository")
  * @ORM\Table(name="rememberme_token")
  */
-class RemembermeToken
+class RememberMeToken implements PersistentTokenInterface
 {
     /**
      * @ORM\Id()
@@ -30,7 +31,7 @@ class RemembermeToken
     private $value;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="last_used")
      */
     private $lastUsed;
 
@@ -107,5 +108,10 @@ class RemembermeToken
         $this->username = $username;
 
         return $this;
+    }
+
+    public function getTokenValue(): string
+    {
+        return $this->getValue();
     }
 }

@@ -18,7 +18,10 @@ services:
     image: 'bitnami/php-fpm:latest'
     volumes:
       - './:/var/www/html'
+    ports:
+      - '9000:9000'
     working_dir: '/var/www/html'
+    command: 'php-fpm -F'
     networks:
       - net
 
@@ -31,7 +34,7 @@ services:
     volumes:
       - './:/var/www/html:ro'
       - './docker/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro'
-      - './docker/akeneo.conf:/usr/local/apache2/conf/vhost.conf:ro'
+      - './docker/host.conf:/usr/local/apache2/conf/vhost.conf:ro'
     networks:
       - net
 
@@ -52,7 +55,7 @@ services:
 
 networks:
   net:
-    driver: "bridge"
+    driver: bridge
 
 volumes:
   data.db:

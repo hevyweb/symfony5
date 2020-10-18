@@ -28,7 +28,7 @@
                             <a href="#" class="tree-grid-action tree-grid-add" data-target="{{ category.id }}" title="Add subcategory">
                                 <i class="fas fa-plus-square"></i>
                             </a>
-                            <a href="#" class="tree-grid-action tree-grid-edit" data-browse="{{ path('category-edit', {'id': category.id}) }}" data-target="{{ category.parent.id }}" title="Edit category">
+                            <a href="#" class="tree-grid-action tree-grid-edit" data-browse="{{ path('category-edit', {'id': category.id}) }}" data-target="{{ category.parent ? category.parent.id : null }}" title="Edit category">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a href="#" class="tree-grid-action tree-grid-delete" data-browse="{{ path('category-delete', {'id': category.id}) }}" title="Remove this branch of categories">
