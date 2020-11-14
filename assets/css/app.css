@@ -171,6 +171,14 @@ input[type=number] {
     -moz-appearance:textfield;
 }
 
+.center{
+    text-align: center;
+}
+
+.bold {
+    font-weight: bold;
+}
+
 .body-wrapper {
     min-height: 100%;
     margin-bottom: -110px;
@@ -869,4 +877,22 @@ table.datagrid .small-coll{
 .readonly {
     background: #e4e4e4;
     color: grey;
+}
+
+.oauth_link{
+    display: inline-block;
+    background: #ee6e73;
+    color: #fff;
+    margin: 20px 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #991918;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 3px 3px 3px #eee;
+}
+.oauth_link_refresh{
+    background: #009e9a;
+    border-color: #057370;
 }

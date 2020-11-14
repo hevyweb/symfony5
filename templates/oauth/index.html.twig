@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="oauth-desc">Ви підтверджуєте доступ до ваших фотографій в google photo. Натисніть на кнопку "Відкрити доступ" та у вспливаючому вікні підтвердіть свою дію.</div>
+    <div>
+        {% if oauth %}
+            <div>Токен було отримано: {{ oauth.createdAt|date('d.m.Y H:i:s') }}</div>
+            <div>Токен закінчується: {{ oauth.expirationDate|date('d.m.Y H:i:s') }}</div>
+        {% else %}
+            <div class="bold">Токен ще не отримано.</div>
+        {% endif %}
+    </div>
+    <div class="center">
+        <a href="{{ request_url }}" class="oauth_link">
+            {% if oauth and oauth.expirationDate > current_date %}
+                Оновини токен
+            {% else %}
+                Відкрити доступ
+            {% endif %}
+        </a>
+    </div>
+    <div>
+        <a href="{{ path('oauth_log') }}">Переглянути історію</a>
+    </div>
+{% endblock %}

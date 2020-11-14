@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <table class="datagrid">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Повідомлення</th>
+                <th>Деталі</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if (list|length) %}
+                {% for key, item in list %}
+                <tr>
+                    <td>{{ key+1 }}</td>
+                    <td>{{ item.message }}</td>
+                    <td>
+                        <table>
+                        {% for description_key, description_item in item.description %}
+                            <tr>
+                                <td>{{ description_key }}</td>
+                                <td>{{ description_item }}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+                    <td>{{ item.created_at.format('d.m.Y H:i:s') }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">Поки що немає жодних повідомлень.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {% include 'common/pagination.html.twig' with {
+        currentFilters: [],
+        currentPage: page,
+        paginationPath: "oauth_log",
+        lastPage: totalPages,
+        showAlwaysFirstAndLast: true
+    } only %}
+{% endblock %}

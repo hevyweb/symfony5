@@ -1,0 +1,14 @@
+{% block mainmenu %}
+    <nav class="navbar navbar-default">
+        <ul class="nav navbar-nav navbar-right">
+            {% block menu %}
+                <li><a href="{{ path('home') }}">Головна</a></li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('users') }}">Користувачі</a></li>
+                {% endif %}
+                <li><a href="{{ path('categories') }}">Категорії</a></li>
+                <li><a href="{{ path('oauth_php') }}">Налаштування</a></li>
+            {% endblock %}
+        </ul>
+    </nav>
+{%  endblock %}
