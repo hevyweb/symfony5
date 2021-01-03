@@ -25,7 +25,7 @@ class Image
     private $filename;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private $path;
 
@@ -35,7 +35,7 @@ class Image
     private $created_at;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $downloaded_at;
 
@@ -93,6 +93,21 @@ class Image
      * @ORM\ManyToMany(targetEntity=Album::class, inversedBy="images")
      */
     private $album;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $locked_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $local_path;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $processed_at;
 
     public function __construct()
     {
@@ -294,6 +309,41 @@ class Image
         if ($this->album->contains($album)) {
             $this->album->removeElement($album);
         }
+
+        return $this;
+    }
+
+    public function getLockedAt(): ?\DateTimeInterface
+    {
+        return $this->locked_at;
+    }
+
+    public function setLockedAt(?\DateTimeInterface $locked_at): self
+    {
+        $this->locked_at = $locked_at;
+
+        return $this;
+    }
+
+    public function getLocalPath(): ? string
+    {
+        return $this->local_path;
+    }
+
+    public function setLocalPath(string $localPath): self
+    {
+        $this->local_path = $localPath;
+        return $this;
+    }
+
+    public function getProcessedAt(): ?\DateTimeInterface
+    {
+        return $this->processed_at;
+    }
+
+    public function setProcessedAt(?\DateTimeInterface $processed_at): self
+    {
+        $this->processed_at = $processed_at;
 
         return $this;
     }

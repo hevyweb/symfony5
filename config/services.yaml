@@ -46,3 +46,10 @@ services:
         calls:
             - [ setContainer, [ '@service_container' ] ]
             - [ setLogger, ['@logger'] ]
+
+    App\Service\LoaderService:
+        public: true
+        arguments:
+            - '@doctrine'
+            - '%google_client_id%'
+            - '%google_client_secret%'

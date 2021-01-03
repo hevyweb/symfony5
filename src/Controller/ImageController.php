@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
+use App\Entity\Oauth;
 use Google\Auth\Credentials\UserRefreshCredentials;
 use Google\Photos\Library\V1\PhotosLibraryClient;
 use Google\Photos\Types\Album;
+use Google\Photos\Types\MediaItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ImageController extends AbstractController
@@ -18,21 +22,46 @@ class ImageController extends AbstractController
     public function test()
     {
         try {
+            $token = $this->getDoctrine()->getRepository(Oauth::class)->findOneBy([
+                'user' => $this->getUser()
+            ]);
+            if (empty($token)) {
+                throw new NotFoundHttpException('Токен не існує.');
+            }
             $authCredentials = new UserRefreshCredentials(
                 'https://www.googleapis.com/auth/photoslibrary',
                 [
-                "client_id" => "174844681564-9bnui3ip778khv6riq7thpi81dbq89th.apps.googleusercontent.com",
-                "client_secret" => "Ryn8Q6BptottX6PUTT30I6Qd",
-                "refresh_token" => '1//0chFd3X-xUuD7CgYIARAAGAwSNwF-L9IrJe9JuGMoRIurAoIuaWFDOHWRvSP1cfKbBtWwEamGldDz1pSVHQq-tFfG5nFwYkEFpnY'
-            ]);
+                "client_id" => $this->getParameter('google_client_id'),
+                "client_secret" => $this->getParameter('google_client_secret'),
+                "refresh_token" => $token->getRefreshToken()
+                ]);
             $photosLibraryClient = new PhotosLibraryClient(['credentials' => $authCredentials]);
-            $albums = $photosLibraryClient->listAlbums();
-            foreach ($albums as $album)
-            {
+            $mediaItems = $photosLibraryClient->listMediaItems([
+                'pageSize' => 100,
+                'pageToken' => null
+            ]);
+            $manager = $this->getDoctrine()->getManager();
+            foreach ($mediaItems as $mediaItem) {
                 /**
-                 * @var Album $album
+                 * @var MediaItem $mediaItem
                  */
-                var_dump($album->getTitle());exit;
+                $image = new Image();
+                $image->setCreatedAt($mediaItem->getMediaMetadata()->getCreationTime()->toDateTime())
+                    ->setDescription($mediaItem->getDescription())
+                    ->setApertureFNumber($mediaItem->getMediaMetadata()->getPhoto()->getApertureFNumber())
+                    ->setCameraMake($mediaItem->getMediaMetadata()->getPhoto()->getCameraMake())
+                    ->setFilename($mediaItem->getFilename())
+                    ->setFocalLength($mediaItem->getMediaMetadata()->getPhoto()->getFocalLength())
+                    ->setGoogleId($mediaItem->getId())
+                    ->setHeight($mediaItem->getMediaMetadata()->getHeight())
+                    ->setIsoEquivalent($mediaItem->getMediaMetadata()->getPhoto()->getIsoEquivalent())
+                    ->setPath($mediaItem->getBaseUrl())
+                    ->setType($mediaItem->getMimeType())
+                    ->setWidth($mediaItem->getMediaMetadata()->getWidth());
+
+                $manager->persist($image);
+                $manager->flush();
+                exit;
             }
         } catch (\Google\ApiCore\ApiException $e) {
             var_dump($e);exit;
