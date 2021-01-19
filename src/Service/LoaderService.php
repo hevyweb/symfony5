@@ -24,6 +24,11 @@ class LoaderService
     private $em;
 
     /**
+     * @var DownloaderService
+     */
+    private $downloaderService;
+
+    /**
      * @var string
      */
     private $googleClientId;
@@ -33,10 +38,15 @@ class LoaderService
      */
     private $googleClientSecret;
 
-    public function __construct(ManagerRegistry $doctrine, string $googleClientId, string $googleClientSecret)
-    {
+    public function __construct(
+        ManagerRegistry $doctrine,
+        DownloaderService $downloaderService,
+        string $googleClientId,
+        string $googleClientSecret
+    ) {
         $this->doctrine = $doctrine;
         $this->em = $doctrine->getManager();
+        $this->downloaderService = $downloaderService;
 
         $this->googleClientId = $googleClientId;
         $this->googleClientSecret = $googleClientSecret;
@@ -126,7 +136,11 @@ class LoaderService
             ->setIsoEquivalent($mediaItem->getMediaMetadata()->getPhoto()->getIsoEquivalent())
             ->setPath($mediaItem->getBaseUrl())
             ->setType($mediaItem->getMimeType())
-            ->setWidth($mediaItem->getMediaMetadata()->getWidth());
+            ->setWidth($mediaItem->getMediaMetadata()->getWidth())
+            ->setDeleted(false)
+        ;
+
+        $image->setLocalPath($this->downloaderService->download($image));
 
         $this->em->persist($image);
         $this->em->flush();

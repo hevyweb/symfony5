@@ -6,9 +6,11 @@ use App\Repository\ImageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
  * @ORM\Entity(repositoryClass=ImageRepository::class)
+ * @ORM\Table(name="image", uniqueConstraints={@UniqueConstraint(name="google_id", columns={"google_id"})})
  */
 class Image
 {
@@ -108,6 +110,11 @@ class Image
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $processed_at;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $deleted;
 
     public function __construct()
     {
@@ -344,6 +351,18 @@ class Image
     public function setProcessedAt(?\DateTimeInterface $processed_at): self
     {
         $this->processed_at = $processed_at;
+
+        return $this;
+    }
+
+    public function getDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): self
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

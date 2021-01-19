@@ -69,7 +69,7 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator
 
     public function supports(Request $request)
     {
-        return 'user-login' === $request->attributes->get('_route')
+        return 'user-login' == $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 

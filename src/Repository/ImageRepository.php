@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Image;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Image[]    findAll()
  * @method Image[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ImageRepository extends ServiceEntityRepository
+class ImageRepository extends AbstractDataGridRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -33,5 +34,23 @@ class ImageRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($image);
         $this->getEntityManager()->flush($image);
         return $image;
+    }
+
+    public function getImagesPerPage(?int $page = 1, ?int $perPage = 100, Criteria $criteria)
+    {
+        return $this->createQueryBuilder('i')
+            ->addCriteria($criteria)
+            ->setMaxResults($perPage)
+            ->setFirstResult(($page - 1) * $perPage)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getDeleted()
+    {
+        return $this->createQueryBuilder('i')
+            ->where('deleted', true)
+            ->getQuery()
+            ->getResult();
     }
 }

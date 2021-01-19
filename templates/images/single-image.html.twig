@@ -1,0 +1,7 @@
+<div class="image-container">
+    <img src="thumbnail/{{ image.localPath }}" style="{{ (image.height > image.width) ? "max-width" : "max-height" }}: 100%" data-width="{{ image.width }}" data-height="{{ image.height }}" data-delete="{{ path('image-delete', {id: image.id, page: page, per_page: perPage}) }}">
+    {% include 'images/edit.html.twig' with {
+        image:image
+    } only
+    %}
+</div>

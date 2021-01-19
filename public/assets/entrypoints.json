@@ -3,27 +3,40 @@
     "js/app": {
       "js": [
         "/assets/runtime.js",
-        "/assets/vendors~js/app~js/categories~js/datagrid.js",
-        "/assets/vendors~js/app.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid~js/images.js",
+        "/assets/vendors~js/app~js/images.js",
         "/assets/js/app.js"
       ],
       "css": [
-        "/assets/vendors~js/app.css"
+        "/assets/vendors~js/app~js/images.css"
       ]
     },
     "js/categories": {
       "js": [
         "/assets/runtime.js",
-        "/assets/vendors~js/app~js/categories~js/datagrid.js",
-        "/assets/vendors~js/categories~js/datagrid.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid~js/images.js",
+        "/assets/vendors~js/categories~js/datagrid~js/images.js",
         "/assets/js/categories.js"
+      ]
+    },
+    "js/images": {
+      "js": [
+        "/assets/runtime.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid~js/images.js",
+        "/assets/vendors~js/categories~js/datagrid~js/images.js",
+        "/assets/vendors~js/app~js/images.js",
+        "/assets/vendors~js/images.js",
+        "/assets/js/images.js"
+      ],
+      "css": [
+        "/assets/vendors~js/app~js/images.css"
       ]
     },
     "js/datagrid": {
       "js": [
         "/assets/runtime.js",
-        "/assets/vendors~js/app~js/categories~js/datagrid.js",
-        "/assets/vendors~js/categories~js/datagrid.js",
+        "/assets/vendors~js/app~js/categories~js/datagrid~js/images.js",
+        "/assets/vendors~js/categories~js/datagrid~js/images.js",
         "/assets/js/datagrid.js"
       ]
     },

@@ -4,11 +4,9 @@ security:
         default_provider:
             entity: { class: App\Entity\User }
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
         main:
             anonymous: true
+            lazy: true
             guard:
                 authenticators:
                     - App\Security\AppUserAuthAuthenticator
@@ -17,11 +15,14 @@ security:
             remember_me:
                 secret:   '%kernel.secret%'
                 lifetime: 604800 # 1 week in seconds
-                path:     /
+                path: /
                 token_provider: 'App\Security\AppTokenProvider'
     encoders:
         App\Entity\User: bcrypt
+    access_denied_url: /login
     access_control:
         - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/[^login|registration], roles: ROLE_USER }
+        - { path: ^/[^(login)|(registration)], roles: ROLE_USER }
+        - { path: ^/categories, roles: ROLE_USER }
         - { path: ^/oauth, roles: ROLE_USER }
+        - { path: ^/images, roles: ROLE_USER }

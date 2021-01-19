@@ -1,0 +1,17 @@
+<div class="image-edit-container">
+    <div class="close-button"><i class="fas fa-window-close"></i></div>
+    <form action="{{ path('image-edit', {id: image.id}) }}" class="image-edit-form">
+        <textarea name="description" placeholder="Опис">{{ image.description }}</textarea>
+        <div class="">Дата зйомки: {{ image.createdAt | date("d.m.Y H:i:s")  }}</div>
+        <div class="">Категорія: </div>
+        <div class="">Завантажено: {{ image.downloadedAt | date("d.m.Y H:i:s") }}</div>
+        <div class="">Розміри: {{ image.width }} x {{ image.height }}</div>
+        <div class="">Камера: {{ image.cameraMake }} {{ image.cameraModel}} </div>
+        <div class="">Фокальна відстань: {{ image.focalLength }}</div>
+        <div class="">Діафрагма: {{ image.apertureFnumber }}</div>
+        <div class="">ISO: {{ image.isoEquivalent }}</div>
+        <div class="">Google id: {{ image.googleId }}</div>
+        <input type="hidden" name="id" value="{{ image.id }}">
+        <button>Зберегти</button>
+    </form>
+</div>

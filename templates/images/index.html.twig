@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="images">
+        <h2>Фото</h2>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "images",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+        <div class="image-filters">
+            <form method="get" action="{{ path('images') }}" class="quick-search">
+                <input type="text" placeholder="Опис у фото" value="{{ filtervariables.q }}" name="q">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+            {% for key, image in images %}
+                {% include 'images/single-image.html.twig' with {
+                    image:image,
+                    page:page,
+                    perPage:perPage
+                } only
+                %}
+            {% else %}
+                <div class="no-results">Нема фотографій</div>
+            {% endfor %}
+        </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "images",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/images') }}
+{% endblock %}

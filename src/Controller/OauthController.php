@@ -27,7 +27,9 @@ class OauthController extends AbstractController
      */
     public function index()
     {
-        $oauth = $this->getDoctrine()->getRepository(Oauth::class)->findOneBy(['user' => $this->getUser()->getId()]);
+        $oauth = $this->getDoctrine()->getRepository(Oauth::class)->findOneBy([
+            'user' => $this->getUser()->getId()
+        ]);
 
         return $this->render('oauth/index.html.twig', [
             'title' => 'Отримання доступу',
