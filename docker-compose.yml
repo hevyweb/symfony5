@@ -15,7 +15,7 @@ services:
       - net
 
   fpm:
-    image: 'bitnami/php-fpm:latest'
+    build: .
     volumes:
       - './:/var/www/html'
     ports:

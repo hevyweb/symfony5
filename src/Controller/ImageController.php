@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Image;
 use App\Repository\ImageRepository;
 use App\Service\DownloaderService;
+use App\Service\ProcessImageService;
 use App\Service\RemoveImageService;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,10 +29,20 @@ class ImageController extends AbstractController
      */
     private $removeImageService;
 
-    public function __construct(DownloaderService $downloaderService, RemoveImageService $removeImageService)
+    /**
+     * @var ProcessImageService
+     */
+    private $processImageService;
+
+    public function __construct(
+        DownloaderService $downloaderService,
+        RemoveImageService $removeImageService,
+        ProcessImageService $processImageService
+    )
     {
         $this->downloaderService = $downloaderService;
         $this->removeImageService = $removeImageService;
+        $this->processImageService = $processImageService;
     }
 
     /**
@@ -111,7 +122,7 @@ class ImageController extends AbstractController
     }
 
     /**
-     * Edit Image
+     * Delete image
      *
      * @Route("/images/delete/{id}", requirements={"id"="\d+"}, name="image-delete")
      */
@@ -126,9 +137,38 @@ class ImageController extends AbstractController
             throw new NotFoundHttpException('Фото не існує, або було видалене.');
         }
 
-        $this->removeImageService->remove($image);
+        $localPath = $this->removeImageService->remove($image);
 
         $image->setDeleted(true);
+        $image->setLocalPath($localPath);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($image);
+        $em->flush();
+        return new JsonResponse(['ok']);
+    }
+
+    /**
+     * Make image active again
+     *
+     * @Route("/images/revoke/{id}", requirements={"id"="\d+"}, name="image-revoke")
+     */
+    public function revoke(Request $request): JsonResponse
+    {
+        $imageId = $request->get('id');
+        /**
+         * @var Image $image
+         */
+        $image = $this->getDoctrine()->getRepository(Image::class)->find($imageId);
+        if (empty($image)) {
+            throw new NotFoundHttpException('Фото не існує, або було видалене.');
+        }
+
+        $localPath = $this->removeImageService->revoke($image);
+
+        $image->setDeleted(false);
+        $image->setLocalPath($localPath);
+        $this->processImageService->resize($image);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($image);

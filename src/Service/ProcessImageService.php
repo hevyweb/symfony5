@@ -50,14 +50,16 @@ class ProcessImageService extends FileSystem
         $manager->flush();
     }
 
-    private function resize(Image $image)
+    public function resize(Image $image)
     {
         list($width, $height) = $this->calculateSize($image);
         $originPath = $this->getOriginPath($image);
         $thumbnailPath = $this->getThumbnailPath($image);
-        exec('ffmpeg -y -hide_banner -loglevel panic -i ' . $originPath . ' -vf scale=' . $width . ':' . $height . ' ' . $thumbnailPath, $output, $return);
+        $command = 'ffmpeg -y -hide_banner -loglevel panic -i ' . $originPath . ' -vf scale=' . $width . ':' . $height . ' ' . $thumbnailPath;
+        exec($command, $output, $return);
         if ($return) {
-            throw new ConversionException('Не можливо створити зменшене зображення для "' . $originPath . '"');
+            var_dump($output);
+            throw new ConversionException('Не можливо створити зменшене зображення для "' . $originPath . '" у "' . $thumbnailPath . '"' . $command);
         }
     }
 
@@ -65,7 +67,7 @@ class ProcessImageService extends FileSystem
     {
         $originPath = $this->getPublicFolderPath() . '/' . $image->getLocalPath();
         if (!is_file($originPath) || !is_readable($originPath)) {
-            throw new \RuntimeException('Файл "' . $originPath . '" не існує, або до нього нема лоступу.');
+            throw new \RuntimeException('Файл "' . $originPath . '" не існує, або до нього нема доступу.');
         }
         return $originPath;
     }

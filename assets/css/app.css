@@ -1080,3 +1080,20 @@ table.datagrid .small-coll{
     background: RGBA(0, 0, 0, .6);
     z-index: 100003;
 }
+
+.image-remove-icon {
+    position: absolute;
+    top: 59px;
+    left: 59px;
+    font-size: 128px;
+    color: #009e9a;
+    display: none;
+}
+
+.image-deleted img {
+    opacity: 0.5;
+}
+
+.image-deleted .image-remove-icon {
+    display: block;
+}

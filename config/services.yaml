@@ -60,3 +60,8 @@ services:
         public: true
         arguments:
             - '%local_image_folder%'
+
+    App\Service\RemoveImageService:
+        public: true
+        arguments:
+            - '%local_image_folder%'

@@ -113,6 +113,7 @@ function close() {
 function PopupEvents(event) {
     switch (event.which) {
         case 39: //right arrow
+        case 417:
             if ($('.edit-image-box').length) {
                 closeImageInfo();
             }
@@ -121,6 +122,7 @@ function PopupEvents(event) {
             break;
 
         case 37: // left arrow
+        case 412:
             if ($('.edit-image-box').length) {
                 closeImageInfo();
             }
@@ -129,6 +131,7 @@ function PopupEvents(event) {
             break;
 
         case 73: //i
+        case 415:
             if ($('.edit-image-box').length) {
                 closeImageInfo();
             } else {
@@ -137,11 +140,15 @@ function PopupEvents(event) {
 
             break;
         case 27: //esc
+        case 413:
             if ($('.edit-image-box').length) {
                 closeImageInfo();
             } else if ($('.popup-veil').length){
                 $('.popup-veil').click();
             }
+            break;
+        case 416: //delete
+            break;
     }
 }
 
@@ -163,15 +170,38 @@ function imageRemove(e)
     .done(function(){
         var src = $('.preload').attr('src');
         var img = $('img[src="' + src + '"]').first();
-        img.parent().css('opacity', 0.4)
+        img.parent().addClass('image-deleted')
         $(img).off('click');
         $('.popup-veil').click();
+        $(img).click(revoke);
     }).fail(function(jqXHR) {
         console.log(jqXHR);
     }).always(function(){
         spinner.removeSpinner();
     });
 
+}
+
+function revoke(e)
+{
+    spinner.addSpinner();
+    var img = $(this);
+    $.get($(this).attr('data-revoke'))
+        .done(function(){
+            $(this).off('click', revoke);
+            $(this).parent().removeClass('image-deleted');
+            $(this).click(function (e) {
+                buildFrame(this);
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        }.bind(this))
+        .fail(function(jqXHR){
+            console.log(jqXHR);
+        })
+        .always(function(){
+            spinner.removeSpinner();
+        });
 }
 
 function imageInfo(e)
